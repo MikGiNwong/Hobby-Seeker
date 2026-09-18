@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
 import {
   MaxContentWidth,
@@ -60,9 +61,22 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <Pressable
+          {/* <Pressable
             accessibilityRole="button"
             style={[styles.primaryButton, { backgroundColor: colors.brand }]}>
+            <Text style={styles.primaryButtonText}>오늘 이야기하기</Text>
+          </Pressable> */}
+          
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/recommendation')}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              {
+                backgroundColor: colors.brand,
+                opacity: pressed ? 0.85 : 1,
+              },
+            ]}>
             <Text style={styles.primaryButtonText}>오늘 이야기하기</Text>
           </Pressable>
         </View>
