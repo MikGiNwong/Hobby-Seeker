@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
 import {
   MaxContentWidth,
@@ -92,6 +93,7 @@ export default function MissionScreen() {
           <View style={styles.actions}>
             <Pressable
               accessibilityRole="button"
+              onPress={() => router.push('/feedback')}
               style={({ pressed }) => [
                 styles.primaryButton,
                 {
