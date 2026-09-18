@@ -1,26 +1,33 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 import '@/global.css';
 
 import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: '#243029',
+    background: '#F7F6F1',
+    backgroundElement: '#FFFFFF',
+    backgroundSelected: '#E4EEE6',
+    textSecondary: '#6B746D',
+
+    brand: '#5F8167',
+    brandSoft: '#E4EEE6',
+    surface: '#FFFDF9',
+    border: '#E1E5DF',
+    danger: '#B95C57',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: '#F3F6F3',
+    background: '#131814',
+    backgroundElement: '#1C231E',
+    backgroundSelected: '#29372D',
+    textSecondary: '#AFB8B1',
+
+    brand: '#8CB596',
+    brandSoft: '#26372B',
+    surface: '#1C231E',
+    border: '#364139',
+    danger: '#E08B85',
   },
 } as const;
 
@@ -28,13 +35,9 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {
@@ -61,5 +64,47 @@ export const Spacing = {
   six: 64,
 } as const;
 
+export const Radius = {
+  small: 8,
+  medium: 12,
+  large: 20,
+  xlarge: 28,
+  pill: 999,
+} as const;
+
+export const Typography = {
+  title: {
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '700',
+  },
+  heading: {
+    fontSize: 24,
+    lineHeight: 32,
+    fontWeight: '700',
+  },
+  subheading: {
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '600',
+  },
+  body: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '400',
+  },
+  bodySmall: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '400',
+  },
+  caption: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+  },
+} as const;
+
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+
 export const MaxContentWidth = 800;
