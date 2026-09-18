@@ -1,5 +1,4 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
@@ -10,7 +9,7 @@ import {
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-export default function RecommendationScreen() {
+export default function MissionScreen() {
   const colors = useTheme();
 
   return (
@@ -19,15 +18,16 @@ export default function RecommendationScreen() {
         <View style={styles.content}>
           <View style={styles.header}>
             <Text style={[styles.eyebrow, { color: colors.brand }]}>
-              🌱 오늘 발견한 활동
+              오늘의 미션
             </Text>
 
             <Text style={[styles.title, { color: colors.text }]}>
-              사진 산책
+              산책하며{'\n'}마음에 드는 장면 3개 찍기
             </Text>
 
             <Text style={[styles.description, { color: colors.textSecondary }]}>
-              최근 산책하거나 밖에 나가고 싶다는 이야기가 여러 번 있었어요.
+              잘 찍을 필요는 없어요.{'\n'}
+              그냥 눈길이 가는 순간을 남겨보세요.
             </Text>
           </View>
 
@@ -39,27 +39,59 @@ export default function RecommendationScreen() {
                 borderColor: colors.border,
               },
             ]}>
-            <Text style={[styles.cardLabel, { color: colors.brand }]}>
-              오늘은 이렇게 시작해볼까요?
-            </Text>
+            <View style={styles.missionRow}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: colors.brandSoft },
+                ]}>
+                <Text style={styles.icon}>📷</Text>
+              </View>
 
-            <Text style={[styles.missionTitle, { color: colors.text }]}>
-              산책하면서 마음에 드는 장면 3개만 찍어보세요.
-            </Text>
+              <View style={styles.missionInfo}>
+                <Text style={[styles.label, { color: colors.textSecondary }]}>
+                  목표
+                </Text>
+                <Text style={[styles.value, { color: colors.text }]}>
+                  사진 3장
+                </Text>
+              </View>
+            </View>
 
-            <Text
-              style={[
-                styles.duration,
-                { color: colors.textSecondary },
-              ]}>
-              약 30분
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+            <View style={styles.missionRow}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: colors.brandSoft },
+                ]}>
+                <Text style={styles.icon}>⏱️</Text>
+              </View>
+
+              <View style={styles.missionInfo}>
+                <Text style={[styles.label, { color: colors.textSecondary }]}>
+                  예상 시간
+                </Text>
+                <Text style={[styles.value, { color: colors.text }]}>
+                  약 30분
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.tip}>
+            <Text style={[styles.tipLabel, { color: colors.brand }]}>
+              작은 팁
+            </Text>
+            <Text style={[styles.tipText, { color: colors.textSecondary }]}>
+              멀리 갈 필요 없어요. 집 근처에서 시작해도 충분해요.
             </Text>
           </View>
 
           <View style={styles.actions}>
             <Pressable
               accessibilityRole="button"
-              onPress={() => router.push('/mission')}
               style={({ pressed }) => [
                 styles.primaryButton,
                 {
@@ -67,24 +99,21 @@ export default function RecommendationScreen() {
                   opacity: pressed ? 0.85 : 1,
                 },
               ]}>
-              <Text style={styles.primaryButtonText}>해볼게요</Text>
+              <Text style={styles.primaryButtonText}>미션 완료했어요</Text>
             </Pressable>
 
             <Pressable
               accessibilityRole="button"
               style={({ pressed }) => [
                 styles.secondaryButton,
-                {
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.6 : 1,
-                },
+                { opacity: pressed ? 0.6 : 1 },
               ]}>
               <Text
                 style={[
                   styles.secondaryButtonText,
                   { color: colors.textSecondary },
                 ]}>
-                오늘은 어려워요
+                나중에 할게요
               </Text>
             </Pressable>
           </View>
@@ -130,19 +159,47 @@ const styles = StyleSheet.create({
     padding: Spacing.four,
     gap: Spacing.three,
   },
-  cardLabel: {
-    ...Typography.bodySmall,
+  missionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: Radius.medium,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    fontSize: 22,
+  },
+  missionInfo: {
+    gap: Spacing.one,
+  },
+  label: {
+    ...Typography.caption,
+  },
+  value: {
+    ...Typography.body,
     fontWeight: '600',
   },
-  missionTitle: {
-    ...Typography.subheading,
+  divider: {
+    height: 1,
   },
-  duration: {
+  tip: {
+    gap: Spacing.two,
+  },
+  tipLabel: {
+    ...Typography.bodySmall,
+    fontWeight: '700',
+  },
+  tipText: {
     ...Typography.bodySmall,
   },
   actions: {
     marginTop: 'auto',
-    gap: Spacing.three,
+    gap: Spacing.two,
   },
   primaryButton: {
     minHeight: 56,
@@ -157,15 +214,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   secondaryButton: {
-    minHeight: 52,
-    borderWidth: 1,
-    borderRadius: Radius.medium,
+    minHeight: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.four,
   },
   secondaryButtonText: {
-    ...Typography.body,
+    ...Typography.bodySmall,
     fontWeight: '600',
   },
 });
