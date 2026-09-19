@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useFeedbackStore } from '@/stores/feedback-store';
 import { useMissionStore } from '@/stores/mission-store';
 
 const CURRENT_MISSION = {
@@ -20,6 +21,7 @@ const CURRENT_MISSION = {
 
 export default function MissionScreen() {
   const colors = useTheme();
+  const resetFeedback = useFeedbackStore((state) => state.resetFeedback);
   const setActiveMission = useMissionStore((state) => state.setActiveMission);
   const clearActiveMission = useMissionStore(
     (state) => state.clearActiveMission,
@@ -27,6 +29,7 @@ export default function MissionScreen() {
 
   const completeMission = () => {
     clearActiveMission();
+    resetFeedback();
     router.push('/feedback');
   };
 
