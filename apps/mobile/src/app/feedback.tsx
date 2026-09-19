@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,17 +9,16 @@ import {
   Typography,
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-
-type Enjoyment = 'low' | 'medium' | 'high';
-type Difficulty = 'easy' | 'good' | 'hard';
-type RepeatIntent = 'no' | 'maybe' | 'yes';
+import { useFeedbackStore } from '@/stores/feedback-store';
 
 export default function FeedbackScreen() {
   const colors = useTheme();
-
-  const [enjoyment, setEnjoyment] = useState<Enjoyment | null>(null);
-  const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
-  const [repeatIntent, setRepeatIntent] = useState<RepeatIntent | null>(null);
+  const enjoyment = useFeedbackStore((state) => state.enjoyment);
+  const difficulty = useFeedbackStore((state) => state.difficulty);
+  const repeatIntent = useFeedbackStore((state) => state.repeatIntent);
+  const setEnjoyment = useFeedbackStore((state) => state.setEnjoyment);
+  const setDifficulty = useFeedbackStore((state) => state.setDifficulty);
+  const setRepeatIntent = useFeedbackStore((state) => state.setRepeatIntent);
 
   const canSubmit =
     enjoyment !== null &&
