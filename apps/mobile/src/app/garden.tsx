@@ -16,9 +16,36 @@ import {
   Typography,
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import {
+  type Difficulty,
+  type Enjoyment,
+  type RepeatIntent,
+  useFeedbackStore,
+} from '@/stores/feedback-store';
+
+const ENJOYMENT_LABELS: Record<Enjoyment, string> = {
+  low: '별로였어요',
+  medium: '괜찮았어요',
+  high: '재미있었어요',
+};
+
+const DIFFICULTY_LABELS: Record<Difficulty, string> = {
+  easy: '쉬웠어요',
+  good: '적당했어요',
+  hard: '어려웠어요',
+};
+
+const REPEAT_INTENT_LABELS: Record<RepeatIntent, string> = {
+  no: '다시 할 생각은 없어요',
+  maybe: '다시 할 수도 있어요',
+  yes: '다시 해보고 싶어요',
+};
 
 export default function GardenScreen() {
   const colors = useTheme();
+  const enjoyment = useFeedbackStore((state) => state.enjoyment);
+  const difficulty = useFeedbackStore((state) => state.difficulty);
+  const repeatIntent = useFeedbackStore((state) => state.repeatIntent);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -108,20 +135,46 @@ export default function GardenScreen() {
               },
             ]}>
             <Text style={[styles.discoveryLabel, { color: colors.brand }]}>
-              🔍 새롭게 발견한 나
+              📝 내가 남긴 피드백
             </Text>
 
             <Text style={[styles.discoveryTitle, { color: colors.text }]}>
-              주변을 천천히 관찰하는 활동에 관심이 있어 보여요.
+              사진 산책은 이렇게 느꼈어요.
             </Text>
 
-            <Text
-              style={[
-                styles.discoveryDescription,
-                { color: colors.textSecondary },
-              ]}>
-              활동과 기록이 더 쌓이면 나만의 취향 지도가 조금씩 완성돼요.
-            </Text>
+            <View style={styles.feedbackList}>
+              <View style={styles.feedbackRow}>
+                <Text
+                  style={[styles.feedbackLabel, { color: colors.textSecondary }]}>
+                  재미
+                </Text>
+                <Text style={[styles.feedbackValue, { color: colors.text }]}>
+                  {enjoyment ? ENJOYMENT_LABELS[enjoyment] : '응답 없음'}
+                </Text>
+              </View>
+
+              <View style={styles.feedbackRow}>
+                <Text
+                  style={[styles.feedbackLabel, { color: colors.textSecondary }]}>
+                  난이도
+                </Text>
+                <Text style={[styles.feedbackValue, { color: colors.text }]}>
+                  {difficulty ? DIFFICULTY_LABELS[difficulty] : '응답 없음'}
+                </Text>
+              </View>
+
+              <View style={styles.feedbackRow}>
+                <Text
+                  style={[styles.feedbackLabel, { color: colors.textSecondary }]}>
+                  다시 하기
+                </Text>
+                <Text style={[styles.feedbackValue, { color: colors.text }]}>
+                  {repeatIntent
+                    ? REPEAT_INTENT_LABELS[repeatIntent]
+                    : '응답 없음'}
+                </Text>
+              </View>
+            </View>
           </View>
 
           <View style={styles.hiddenBranch}>
@@ -322,8 +375,22 @@ const styles = StyleSheet.create({
   discoveryTitle: {
     ...Typography.subheading,
   },
-  discoveryDescription: {
+  feedbackList: {
+    gap: Spacing.two,
+  },
+  feedbackRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.three,
+  },
+  feedbackLabel: {
     ...Typography.bodySmall,
+  },
+  feedbackValue: {
+    ...Typography.bodySmall,
+    flexShrink: 1,
+    fontWeight: '600',
+    textAlign: 'right',
   },
   hiddenBranch: {
     gap: Spacing.three,
