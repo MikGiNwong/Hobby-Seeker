@@ -106,6 +106,12 @@ export default function MissionScreen() {
 
             <Pressable
               accessibilityRole="button"
+              onPress={() =>
+                router.replace({
+                    pathname: '/today',
+                    params: { mission: 'active' },
+                    })
+                }
               style={({ pressed }) => [
                 styles.secondaryButton,
                 { opacity: pressed ? 0.6 : 1 },
