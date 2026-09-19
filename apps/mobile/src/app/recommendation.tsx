@@ -59,8 +59,7 @@ export default function RecommendationScreen() {
           <View style={styles.actions}>
             <Pressable
               accessibilityRole="button"
-            //   onPress={() => router.push('/mission')}
-              onPress={() => {}}
+              onPress={() => router.push('/mission')}
               style={({ pressed }) => [
                 styles.primaryButton,
                 {
@@ -72,22 +71,23 @@ export default function RecommendationScreen() {
             </Pressable>
 
             <Pressable
-              accessibilityRole="button"
-              style={({ pressed }) => [
-                styles.secondaryButton,
-                {
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.6 : 1,
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.secondaryButtonText,
-                  { color: colors.textSecondary },
+                accessibilityRole="button"
+                onPress={() => router.replace('/today')}
+                style={({ pressed }) => [
+                    styles.secondaryButton,
+                    {
+                    borderColor: colors.border,
+                    opacity: pressed ? 0.6 : 1,
+                    },
                 ]}>
-                오늘은 어려워요
-              </Text>
-            </Pressable>
+                <Text
+                    style={[
+                    styles.secondaryButtonText,
+                    { color: colors.textSecondary },
+                    ]}>
+                    오늘은 어려워요
+                </Text>
+                </Pressable>
           </View>
         </View>
       </SafeAreaView>

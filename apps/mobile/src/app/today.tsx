@@ -1,6 +1,6 @@
+import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 
 import {
   MaxContentWidth,
@@ -10,25 +10,88 @@ import {
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-export default function HomeScreen() {
+export default function TodayScreen() {
   const colors = useTheme();
+
+  const { mission } = useLocalSearchParams<{ mission?: string }>();
+  const hasActiveMission = mission === 'active';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={[styles.brand, { color: colors.brand }]}>Hobby-Seeker</Text>
+            <Text style={[styles.brand, { color: colors.brand }]}>
+              Hobby-Seeker
+            </Text>
 
             <Text style={[styles.title, { color: colors.text }]}>
               오늘은 어떤 하루였나요?
             </Text>
 
-            <Text style={[styles.description, { color: colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.description,
+                { color: colors.textSecondary },
+              ]}>
               일상을 조금씩 들려주세요.{'\n'}
               당신에게 맞는 취미의 씨앗을 찾아볼게요.
             </Text>
           </View>
+
+          {hasActiveMission && (
+            <View
+              style={[
+                styles.activeMissionCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.activeMissionLabel,
+                  { color: colors.brand },
+                ]}>
+                🌱 진행 중인 미션
+              </Text>
+
+              <Text
+                style={[
+                  styles.activeMissionTitle,
+                  { color: colors.text },
+                ]}>
+                산책하며 마음에 드는 장면 3개 찍기
+              </Text>
+
+              <Text
+                style={[
+                  styles.activeMissionDescription,
+                  { color: colors.textSecondary },
+                ]}>
+                약 30분
+              </Text>
+
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => router.push('/mission')}
+                style={({ pressed }) => [
+                  styles.missionButton,
+                  {
+                    borderColor: colors.brand,
+                    opacity: pressed ? 0.7 : 1,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.missionButtonText,
+                    { color: colors.brand },
+                  ]}>
+                  미션 이어하기
+                </Text>
+              </Pressable>
+            </View>
+          )}
 
           <View
             style={[
@@ -55,18 +118,16 @@ export default function HomeScreen() {
                 오늘 있었던 일을{'\n'}편하게 이야기해보세요.
               </Text>
 
-              <Text style={[styles.seedDescription, { color: colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.seedDescription,
+                  { color: colors.textSecondary },
+                ]}>
                 작은 이야기들이 쌓이면 새로운 취미의 씨앗이 보여요.
               </Text>
             </View>
           </View>
 
-          {/* <Pressable
-            accessibilityRole="button"
-            style={[styles.primaryButton, { backgroundColor: colors.brand }]}>
-            <Text style={styles.primaryButtonText}>오늘 이야기하기</Text>
-          </Pressable> */}
-          
           <Pressable
             accessibilityRole="button"
             onPress={() => router.push('/recommendation')}
@@ -115,6 +176,37 @@ const styles = StyleSheet.create({
   description: {
     ...Typography.body,
   },
+
+  activeMissionCard: {
+    borderWidth: 1,
+    borderRadius: Radius.large,
+    padding: Spacing.four,
+    gap: Spacing.two,
+  },
+  activeMissionLabel: {
+    ...Typography.bodySmall,
+    fontWeight: '700',
+  },
+  activeMissionTitle: {
+    ...Typography.subheading,
+  },
+  activeMissionDescription: {
+    ...Typography.bodySmall,
+  },
+  missionButton: {
+    minHeight: 44,
+    marginTop: Spacing.two,
+    borderWidth: 1,
+    borderRadius: Radius.medium,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.three,
+  },
+  missionButtonText: {
+    ...Typography.bodySmall,
+    fontWeight: '700',
+  },
+
   seedCard: {
     borderWidth: 1,
     borderRadius: Radius.large,
