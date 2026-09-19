@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -123,15 +124,16 @@ export default function FeedbackScreen() {
           <Pressable
             accessibilityRole="button"
             disabled={!canSubmit}
-            style={[
-              styles.submitButton,
-              {
+            onPress={() => router.replace('/garden')}
+            style={({ pressed }) => [
+                styles.submitButton,
+                {
                 backgroundColor: colors.brand,
-                opacity: canSubmit ? 1 : 0.4,
-              },
+                opacity: !canSubmit ? 0.4 : pressed ? 0.85 : 1,
+                },
             ]}>
             <Text style={styles.submitButtonText}>피드백 남기기</Text>
-          </Pressable>
+            </Pressable>
         </ScrollView>
       </SafeAreaView>
     </View>
