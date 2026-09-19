@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,12 +9,11 @@ import {
   Typography,
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useMissionStore } from '@/stores/mission-store';
 
 export default function TodayScreen() {
   const colors = useTheme();
-
-  const { mission } = useLocalSearchParams<{ mission?: string }>();
-  const hasActiveMission = mission === 'active';
+  const activeMission = useMissionStore((state) => state.activeMission);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -39,7 +38,7 @@ export default function TodayScreen() {
             </Text>
           </View>
 
-          {hasActiveMission && (
+          {activeMission?.status === 'active' && (
             <View
               style={[
                 styles.activeMissionCard,
@@ -61,7 +60,7 @@ export default function TodayScreen() {
                   styles.activeMissionTitle,
                   { color: colors.text },
                 ]}>
-                산책하며 마음에 드는 장면 3개 찍기
+                {activeMission.title}
               </Text>
 
               <Text
@@ -69,7 +68,7 @@ export default function TodayScreen() {
                   styles.activeMissionDescription,
                   { color: colors.textSecondary },
                 ]}>
-                약 30분
+                약 {activeMission.estimatedMinutes}분
               </Text>
 
               <Pressable

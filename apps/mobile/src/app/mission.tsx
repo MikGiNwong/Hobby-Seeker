@@ -9,9 +9,31 @@ import {
   Typography,
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useMissionStore } from '@/stores/mission-store';
+
+const CURRENT_MISSION = {
+  id: 'photo-walk-3-scenes',
+  title: '산책하며 마음에 드는 장면 3개 찍기',
+  estimatedMinutes: 30,
+  status: 'active' as const,
+};
 
 export default function MissionScreen() {
   const colors = useTheme();
+  const setActiveMission = useMissionStore((state) => state.setActiveMission);
+  const clearActiveMission = useMissionStore(
+    (state) => state.clearActiveMission,
+  );
+
+  const completeMission = () => {
+    clearActiveMission();
+    router.push('/feedback');
+  };
+
+  const deferMission = () => {
+    setActiveMission(CURRENT_MISSION);
+    router.replace('/today');
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -93,7 +115,7 @@ export default function MissionScreen() {
           <View style={styles.actions}>
             <Pressable
               accessibilityRole="button"
-              onPress={() => router.push('/feedback')}
+              onPress={completeMission}
               style={({ pressed }) => [
                 styles.primaryButton,
                 {
@@ -106,12 +128,7 @@ export default function MissionScreen() {
 
             <Pressable
               accessibilityRole="button"
-              onPress={() =>
-                router.replace({
-                    pathname: '/today',
-                    params: { mission: 'active' },
-                    })
-                }
+              onPress={deferMission}
               style={({ pressed }) => [
                 styles.secondaryButton,
                 { opacity: pressed ? 0.6 : 1 },
