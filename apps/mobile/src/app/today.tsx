@@ -1,5 +1,16 @@
+import { useRef, useState } from 'react';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  type LayoutChangeEvent,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
@@ -9,16 +20,85 @@ import {
   Typography,
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useDailyEntryStore } from '@/stores/daily-entry-store';
 import { useMissionStore } from '@/stores/mission-store';
 
 export default function TodayScreen() {
   const colors = useTheme();
+  const [draft, setDraft] = useState('');
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewHeightRef = useRef(0);
+  const entryInputLayoutRef = useRef({ y: 0, height: 0 });
+  const isEntryInputFocusedRef = useRef(false);
   const activeMission = useMissionStore((state) => state.activeMission);
+  const entries = useDailyEntryStore((state) => state.entries);
+  const addEntry = useDailyEntryStore((state) => state.addEntry);
+  const trimmedDraft = draft.trim();
+  const canSubmit = trimmedDraft.length > 0;
+  const latestEntry = entries[entries.length - 1];
+
+  const scrollEntryInputIntoView = () => {
+    const { y, height } = entryInputLayoutRef.current;
+    const scrollViewHeight = scrollViewHeightRef.current;
+
+    if (scrollViewHeight === 0) {
+      return;
+    }
+
+    scrollViewRef.current?.scrollTo({
+      y: Math.max(0, y + height + Spacing.three - scrollViewHeight),
+      animated: true,
+    });
+  };
+
+  const handleScrollViewLayout = (event: LayoutChangeEvent) => {
+    scrollViewHeightRef.current = event.nativeEvent.layout.height;
+
+    if (isEntryInputFocusedRef.current) {
+      scrollEntryInputIntoView();
+    }
+  };
+
+  const handleEntryInputLayout = (event: LayoutChangeEvent) => {
+    const { y, height } = event.nativeEvent.layout;
+    entryInputLayoutRef.current = { y, height };
+  };
+
+  const handleEntryInputFocus = () => {
+    isEntryInputFocusedRef.current = true;
+    scrollEntryInputIntoView();
+  };
+
+  const submitEntry = () => {
+    if (!canSubmit) {
+      return;
+    }
+
+    const createdAt = new Date().toISOString();
+
+    addEntry({
+      id: `daily-entry-${Date.now()}`,
+      content: trimmedDraft,
+      createdAt,
+    });
+    setDraft('');
+    router.push('/recommendation');
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.content}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.keyboardAvoidingView}>
+          <ScrollView
+            ref={scrollViewRef}
+            keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+            keyboardShouldPersistTaps="handled"
+            onLayout={handleScrollViewLayout}
+            showsVerticalScrollIndicator={false}
+            style={styles.scrollView}
+            contentContainerStyle={styles.content}>
           <View style={styles.header}>
             <Text style={[styles.brand, { color: colors.brand }]}>
               Hobby-Seeker
@@ -127,19 +207,57 @@ export default function TodayScreen() {
             </View>
           </View>
 
+          {latestEntry && (
+            <View
+              style={[
+                styles.latestEntry,
+                { backgroundColor: colors.backgroundElement },
+              ]}>
+              <Text style={[styles.latestEntryLabel, { color: colors.brand }]}>
+                최근 남긴 이야기
+              </Text>
+              <Text style={[styles.latestEntryContent, { color: colors.text }]}>
+                {latestEntry.content}
+              </Text>
+            </View>
+          )}
+
+          <TextInput
+            multiline
+            value={draft}
+            onChangeText={setDraft}
+            onBlur={() => {
+              isEntryInputFocusedRef.current = false;
+            }}
+            onFocus={handleEntryInputFocus}
+            onLayout={handleEntryInputLayout}
+            placeholder="오늘 마음에 남은 순간을 편하게 적어보세요."
+            placeholderTextColor={colors.textSecondary}
+            style={[
+              styles.entryInput,
+              {
+                backgroundColor: colors.backgroundElement,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+
           <Pressable
             accessibilityRole="button"
-            onPress={() => router.push('/recommendation')}
+            disabled={!canSubmit}
+            onPress={submitEntry}
             style={({ pressed }) => [
               styles.primaryButton,
               {
                 backgroundColor: colors.brand,
-                opacity: pressed ? 0.85 : 1,
+                opacity: !canSubmit ? 0.4 : pressed ? 0.85 : 1,
               },
             ]}>
-            <Text style={styles.primaryButtonText}>오늘 이야기하기</Text>
+            <Text style={styles.primaryButtonText}>이야기 남기기</Text>
           </Pressable>
-        </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
   );
@@ -155,8 +273,14 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: MaxContentWidth,
   },
-  content: {
+  keyboardAvoidingView: {
     flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     paddingTop: Spacing.six,
     paddingHorizontal: Spacing.four,
     paddingBottom: Spacing.four,
@@ -234,6 +358,27 @@ const styles = StyleSheet.create({
   },
   seedDescription: {
     ...Typography.bodySmall,
+  },
+  latestEntry: {
+    borderRadius: Radius.medium,
+    padding: Spacing.three,
+    gap: Spacing.one,
+  },
+  latestEntryLabel: {
+    ...Typography.caption,
+    fontWeight: '700',
+  },
+  latestEntryContent: {
+    ...Typography.bodySmall,
+  },
+  entryInput: {
+    ...Typography.body,
+    minHeight: 120,
+    borderWidth: 1,
+    borderRadius: Radius.medium,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+    textAlignVertical: 'top',
   },
   primaryButton: {
     minHeight: 56,
